@@ -1,0 +1,28 @@
+name: tests
+on: push
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2
+      
+      - name: Run tests with Maven
+        run: mvn -B test
+        # 注意：在GitHub Actions中，您不需要指定pom.xml的路径，因为Maven默认会在项目根目录查找它。
+        # 如果您的pom.xml文件不在项目根目录，您需要在仓库中设置相应的结构或使用其他方法指定工作目录。
+        # 另外，请确保您的pom.xml文件路径在Linux环境下是有效的，因为GitHub Actions在Linux虚拟机上运行。
+        # 示例中的路径'E:\开源软件开发实践\lab 4\untitled\pom.xml'是Windows路径，不适用于GitHub Actions。
